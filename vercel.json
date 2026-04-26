@@ -14,6 +14,7 @@
     }
   ],
   "env": {
+    "APP_DEBUG": "true",
     "APP_NAME": "ChainX",
     "APP_KEY": "base64:IWgCd62cPHGAFMJm4VEa9vEwO3G6M/jrpDrQav3gzHE=",
     "APP_CONFIG_CACHE": "/tmp/config.php",
