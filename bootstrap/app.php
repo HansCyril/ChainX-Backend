@@ -20,5 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
+            echo "<h1>Real Error Occurred:</h1>";
+            echo "<pre>" . $e->getMessage() . "\n\n" . $e->getTraceAsString() . "</pre>";
+            exit;
+        });
     })->create();
