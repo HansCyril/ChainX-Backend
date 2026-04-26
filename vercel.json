@@ -14,6 +14,8 @@
     }
   ],
   "env": {
+    "APP_NAME": "ChainX",
+    "APP_KEY": "base64:IWgCd62cPHGAFMJm4VEa9vEwO3G6M/jrpDrQav3gzHE=",
     "APP_CONFIG_CACHE": "/tmp/config.php",
     "APP_EVENTS_CACHE": "/tmp/events.php",
     "APP_PACKAGES_CACHE": "/tmp/packages.php",
@@ -22,6 +24,12 @@
     "VIEW_COMPILED_PATH": "/tmp",
     "CACHE_DRIVER": "array",
     "SESSION_DRIVER": "cookie",
-    "LOG_CHANNEL": "stderr"
+    "LOG_CHANNEL": "stderr",
+    "DB_CONNECTION": "pgsql",
+    "DB_HOST": "aws-1-ap-northeast-1.pooler.supabase.com",
+    "DB_PORT": "6543",
+    "DB_DATABASE": "postgres",
+    "DB_USERNAME": "postgres.pialgvkcucyqvtcksxge",
+    "DB_PASSWORD": "StrongSupabase!@#ChainX$2026%Secure^&*"
   }
 }
