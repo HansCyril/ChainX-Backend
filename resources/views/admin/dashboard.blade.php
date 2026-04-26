@@ -11,7 +11,7 @@
             @endif
 
             <!-- Stats -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-6 mb-8">
                 <div class="block bg-white p-8 rounded-[2rem] shadow-xl border border-gray-100 group hover:bg-gray-900 transition-all duration-500">
                     <span class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 group-hover:text-gray-500">Total Sales</span>
                     <span class="text-4xl font-black text-gray-900 group-hover:text-white transition-colors">₱{{ number_format($stats['total_sales'], 2) }}</span>
@@ -33,6 +33,13 @@
                         <svg class="w-4 h-4 text-slate-300 group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </span>
                     <span class="text-4xl font-black text-gray-900 group-hover:text-white transition-colors">{{ \App\Models\Category::count() }}</span>
+                </a>
+                <a href="{{ route('admin.brands.index') }}" class="block bg-white p-8 rounded-[2rem] shadow-xl border border-gray-100 group hover:bg-pink-500 transition-all duration-500">
+                    <span class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 group-hover:text-pink-200 flex justify-between">
+                        Brands
+                        <svg class="w-4 h-4 text-slate-300 group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </span>
+                    <span class="text-4xl font-black text-gray-900 group-hover:text-white transition-colors">{{ \App\Models\Brand::count() }}</span>
                 </a>
             </div>
 
