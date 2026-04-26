@@ -39,6 +39,12 @@ class ProductListing extends Component
         if (!$product) return;
 
         $cart = session()->get('cart', []);
+        $currentQty = isset($cart[$productId]) ? $cart[$productId]['quantity'] : 0;
+
+        if ($currentQty + 1 > $product->quantity) {
+            $this->dispatch('show-toast', message: "Maximum stock reached! Only {$product->quantity} units available.", type: 'error');
+            return;
+        }
 
         if (isset($cart[$productId])) {
             $cart[$productId]['quantity']++;
@@ -50,12 +56,15 @@ class ProductListing extends Component
                 'sale_price' => $product->sale_price,
                 'quantity' => 1,
                 'slug' => $product->slug,
-                'image' => $product->images->where('is_primary', true)->first()?->image_path ?? 'https://placehold.co/100x100?text=' . urlencode($product->name),
+                'image' => $product->image ? asset('storage/' . $product->image) : 'https://placehold.co/100x100?text=' . urlencode($product->name),
             ];
         }
 
         session()->put('cart', $cart);
         $this->dispatch('cartUpdated');
+        
+        // Redirect to the cart page as requested
+        return $this->redirect(route('cart'), navigate: true);
     }
 
     public function render()

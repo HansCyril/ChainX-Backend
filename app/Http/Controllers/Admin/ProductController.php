@@ -3,63 +3,95 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\Brand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $products = Product::with(['category', 'brand'])->latest()->paginate(10);
+        return view('admin.products.index', compact('products'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $categories = Category::all();
+        $brands = Brand::all();
+        return view('admin.products.create', compact('categories', 'brands'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'sale_price' => 'nullable|numeric|min:0',
+            'quantity' => 'required|integer|min:0',
+            'sku' => 'nullable|string|max:100|unique:products,sku',
+            'category_id' => 'required|exists:categories,id',
+            'brand_id' => 'required|exists:brands,id',
+            'is_active' => 'boolean',
+            'is_featured' => 'boolean',
+        ]);
+
+        $validated['slug'] = Str::slug($validated['name']) . '-' . uniqid();
+        $validated['is_active'] = $request->has('is_active');
+        $validated['is_featured'] = $request->has('is_featured');
+        
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('products', 'public');
+        }
+
+        Product::create($validated);
+
+        return redirect()->route('admin.products.index')->with('success', 'Product created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
+        return redirect()->route('admin.products.edit', $id);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(Product $product)
     {
-        //
+        $categories = Category::all();
+        $brands = Brand::all();
+        return view('admin.products.edit', compact('product', 'categories', 'brands'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Product $product)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'sale_price' => 'nullable|numeric|min:0',
+            'quantity' => 'required|integer|min:0',
+            'sku' => 'nullable|string|max:100|unique:products,sku,' . $product->id,
+            'category_id' => 'required|exists:categories,id',
+            'brand_id' => 'required|exists:brands,id',
+        ]);
+
+        $validated['is_active'] = $request->has('is_active');
+        $validated['is_featured'] = $request->has('is_featured');
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('products', 'public');
+        }
+
+        $product->update($validated);
+
+        return redirect()->route('admin.products.index')->with('success', 'Product updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Product $product)
     {
-        //
+        $product->delete();
+        return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully.');
     }
 }

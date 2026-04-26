@@ -10,6 +10,11 @@ new class extends Component
 {
     public string $name = '';
     public string $email = '';
+    public string $phone = '';
+    public string $address = '';
+    public string $city = '';
+    public string $province = '';
+    public string $postal_code = '';
 
     /**
      * Mount the component.
@@ -18,6 +23,11 @@ new class extends Component
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
+        $this->phone = Auth::user()->phone ?? '';
+        $this->address = Auth::user()->address ?? '';
+        $this->city = Auth::user()->city ?? '';
+        $this->province = Auth::user()->province ?? '';
+        $this->postal_code = Auth::user()->postal_code ?? '';
     }
 
     /**
@@ -30,6 +40,11 @@ new class extends Component
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'city' => ['nullable', 'string', 'max:100'],
+            'province' => ['nullable', 'string', 'max:100'],
+            'postal_code' => ['nullable', 'string', 'max:20'],
         ]);
 
         $user->fill($validated);
@@ -51,7 +66,7 @@ new class extends Component
         $user = Auth::user();
 
         if ($user->hasVerifiedEmail()) {
-            $this->redirectIntended(default: route('dashboard', absolute: false));
+            $this->redirectIntended(default: route('products.index', absolute: false));
 
             return;
         }
@@ -102,6 +117,36 @@ new class extends Component
                     @endif
                 </div>
             @endif
+        </div>
+
+        <div>
+            <x-input-label for="phone" :value="__('Phone Number')" />
+            <x-text-input wire:model="phone" id="phone" name="phone" type="text" class="mt-1 block w-full" placeholder="09xxxxxxxxx" />
+            <x-input-error class="mt-2" :messages="$errors->get('phone')" />
+        </div>
+
+        <div>
+            <x-input-label for="address" :value="__('Street Address')" />
+            <x-text-input wire:model="address" id="address" name="address" type="text" class="mt-1 block w-full" placeholder="House #, Street, Brgy" />
+            <x-input-error class="mt-2" :messages="$errors->get('address')" />
+        </div>
+
+        <div class="grid grid-cols-3 gap-4">
+            <div>
+                <x-input-label for="city" :value="__('City')" />
+                <x-text-input wire:model="city" id="city" name="city" type="text" class="mt-1 block w-full" />
+                <x-input-error class="mt-2" :messages="$errors->get('city')" />
+            </div>
+            <div>
+                <x-input-label for="province" :value="__('Province')" />
+                <x-text-input wire:model="province" id="province" name="province" type="text" class="mt-1 block w-full" />
+                <x-input-error class="mt-2" :messages="$errors->get('province')" />
+            </div>
+            <div>
+                <x-input-label for="postal_code" :value="__('Postal Code')" />
+                <x-text-input wire:model="postal_code" id="postal_code" name="postal_code" type="text" class="mt-1 block w-full" />
+                <x-input-error class="mt-2" :messages="$errors->get('postal_code')" />
+            </div>
         </div>
 
         <div class="flex items-center gap-4">

@@ -5,21 +5,53 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
+use App\Models\PromoCode;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class Checkout extends Component
 {
     public $address = '';
     public $notes = '';
-    public $paymentMethod = 'stripe';
+    public $paymentMethod = 'cod';
     public $cart = [];
+    public $promoCodeId = null;
+    public $discount = 0;
+    public $subtotal = 0;
+    public $total = 0;
 
     public function mount()
     {
         $this->cart = session()->get('cart', []);
+        
         if (count($this->cart) === 0) {
             return redirect()->route('products.index');
         }
+
+        $this->calculateTotals();
+    }
+
+    protected function calculateTotals()
+    {
+        $this->subtotal = collect($this->cart)->sum(function ($item) {
+            return ($item['sale_price'] ?? $item['price']) * $item['quantity'];
+        });
+
+        $this->discount = 0;
+        $this->promoCodeId = null;
+
+        if (session()->has('promo_code')) {
+            $promo = PromoCode::find(session('promo_code')['id']);
+            if ($promo && $promo->isValid($this->subtotal)) {
+                $this->promoCodeId = $promo->id;
+                $this->discount = $promo->calculateDiscount($this->subtotal);
+            } else {
+                session()->forget('promo_code');
+            }
+        }
+
+        $this->total = max(0, $this->subtotal - $this->discount);
     }
 
     public function placeOrder()
@@ -29,43 +61,77 @@ class Checkout extends Component
             'paymentMethod' => 'required',
         ]);
 
-        $total = collect($this->cart)->sum(function ($item) {
-            return ($item['sale_price'] ?? $item['price']) * $item['quantity'];
-        });
+        $this->calculateTotals(); // Final check before order
 
-        $order = Order::create([
-            'user_id' => auth()->id(),
-            'order_number' => 'ORD-' . strtoupper(Str::random(10)),
-            'status' => 'pending',
-            'total_amount' => $total,
-            'payment_status' => 'pending',
-            'payment_method' => $this->paymentMethod,
-            'shipping_address' => $this->address,
-            'notes' => $this->notes,
-        ]);
+        try {
+            DB::beginTransaction();
 
-        foreach ($this->cart as $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $item['id'],
-                'quantity' => $item['quantity'],
-                'price' => $item['sale_price'] ?? $item['price'],
+            // 1. Create Order
+            $order = Order::create([
+                'user_id' => auth()->id(),
+                'order_number' => 'ORD-' . strtoupper(Str::random(10)),
+                'status' => 'pending',
+                'subtotal' => $this->subtotal,
+                'discount_amount' => $this->discount,
+                'total_amount' => $this->total,
+                'promo_code_id' => $this->promoCodeId,
+                'payment_status' => 'pending', // Simulating pending until payment
+                'payment_method' => $this->paymentMethod,
+                'shipping_address' => $this->address,
+                'notes' => $this->notes,
             ]);
-        }
 
-        session()->forget('cart');
-        
-        return redirect()->route('dashboard')->with('success', 'Order placed successfully!');
+            // 2. Create Order Items & Update Stock (With Locking for Race Conditions)
+            foreach ($this->cart as $cartItem) {
+                $product = Product::where('id', $cartItem['id'])->lockForUpdate()->first();
+                
+                if (!$product || $product->quantity < $cartItem['quantity']) {
+                    throw new \Exception("Insufficient stock for " . ($product->name ?? 'unknown product'));
+                }
+
+                // Create Order Item
+                $order->items()->create([
+                    'product_id' => $product->id,
+                    'quantity' => $cartItem['quantity'],
+                    'price' => $cartItem['sale_price'] ?? $cartItem['price'],
+                ]);
+
+                // Decrement Stock
+                $product->decrement('quantity', $cartItem['quantity']);
+            }
+
+            // 3. Mark Promo as used
+            if ($this->promoCodeId) {
+                $promo = PromoCode::where('id', $this->promoCodeId)->lockForUpdate()->first();
+                if ($promo) {
+                    $promo->increment('used_count');
+                }
+            }
+
+            // 4. Log high-value action for security audit
+            \Illuminate\Support\Facades\Log::info("SECURITY_AUDIT: Order placed", [
+                'order_id' => $order->id,
+                'user_id' => auth()->id(),
+                'ip' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'total' => $this->total
+            ]);
+
+            DB::commit();
+
+            session()->forget(['cart', 'promo_code']);
+            session()->flash('success', 'Order placed successfully!');
+
+            return redirect()->route('orders.index');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->addError('payment', $e->getMessage());
+        }
     }
 
     public function render()
     {
-        $total = collect($this->cart)->sum(function ($item) {
-            return ($item['sale_price'] ?? $item['price']) * $item['quantity'];
-        });
-
-        return view('livewire.checkout', [
-            'total' => $total
-        ]);
+        return view('livewire.checkout');
     }
 }

@@ -40,11 +40,11 @@
                                             <div class="text-right">
                                                 <span class="block text-sm font-bold text-gray-400 line-through">
                                                     @if($item['sale_price'])
-                                                        ${{ number_format($item['price'] * $item['quantity'], 2) }}
+                                                        ₱{{ number_format($item['price'] * $item['quantity'], 2) }}
                                                     @endif
                                                 </span>
                                                 <span class="text-lg font-black text-gray-900">
-                                                    ${{ number_format(($item['sale_price'] ?? $item['price']) * $item['quantity'], 2) }}
+                                                    ₱{{ number_format(($item['sale_price'] ?? $item['price']) * $item['quantity'], 2) }}
                                                 </span>
                                             </div>
                                         </div>
@@ -61,22 +61,33 @@
                                 <div class="space-y-4 mb-8">
                                     <div class="flex justify-between text-gray-400 font-bold">
                                         <span>Subtotal</span>
-                                        <span class="text-white">${{ number_format($total, 2) }}</span>
+                                        <span class="text-white">₱{{ number_format($subtotal, 2) }}</span>
                                     </div>
+                                    @if($discount > 0)
+                                    <div class="flex justify-between font-bold text-green-400">
+                                        <span class="flex items-center gap-2">
+                                            Promo ({{ $promoCode->code }})
+                                            <button wire:click="removePromo" class="text-green-600 hover:text-red-400 transition-colors">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                                            </button>
+                                        </span>
+                                        <span>-₱{{ number_format($discount, 2) }}</span>
+                                    </div>
+                                    @endif
                                     <div class="flex justify-between text-gray-400 font-bold">
                                         <span>Shipping</span>
                                         <span class="text-green-400 uppercase text-xs tracking-widest bg-green-400/10 px-2 py-1 rounded">Free</span>
                                     </div>
                                     <div class="flex justify-between text-gray-400 font-bold">
                                         <span>Tax (Estimated)</span>
-                                        <span class="text-white">$0.00</span>
+                                        <span class="text-white">₱0.00</span>
                                     </div>
                                 </div>
 
                                 <div class="border-t border-white/10 pt-6 mb-8">
                                     <div class="flex justify-between items-baseline">
                                         <span class="text-lg font-bold text-gray-400">Total Amount</span>
-                                        <span class="text-4xl font-black text-white tracking-tighter">${{ number_format($total, 2) }}</span>
+                                        <span class="text-4xl font-black text-white tracking-tighter">₱{{ number_format($total, 2) }}</span>
                                     </div>
                                 </div>
 
@@ -91,10 +102,23 @@
                                 <!-- Promo Code -->
                                 <div class="mt-8 pt-8 border-t border-white/10">
                                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Promo Code</label>
-                                    <div class="flex gap-2">
-                                        <input type="text" placeholder="Enter code" class="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-indigo-500 focus:border-indigo-500 flex-1">
-                                        <button class="px-6 bg-white/10 rounded-xl font-bold text-sm hover:bg-white/20 transition-colors">Apply</button>
-                                    </div>
+                                    @if($promoCode)
+                                        <div class="flex items-center gap-3 bg-green-400/10 border border-green-400/30 rounded-xl px-4 py-3">
+                                            <svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                            <span class="text-green-400 font-black text-sm flex-1">{{ $promoCode->code }} applied!</span>
+                                            <button wire:click="removePromo" class="text-green-600 hover:text-red-400 transition-colors">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                                            </button>
+                                        </div>
+                                    @else
+                                        <div class="flex gap-2">
+                                            <input wire:model="promoInput" type="text" placeholder="Enter code" class="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-indigo-500 focus:border-indigo-500 flex-1 uppercase font-black placeholder:font-normal placeholder:normal-case">
+                                            <button wire:click="applyPromo" class="px-6 bg-white/10 rounded-xl font-black text-sm hover:bg-white/20 transition-colors">Apply</button>
+                                        </div>
+                                        @if($promoError)
+                                            <p class="mt-2 text-red-400 text-xs font-bold">{{ $promoError }}</p>
+                                        @endif
+                                    @endif
                                 </div>
                             </div>
                         </div>
