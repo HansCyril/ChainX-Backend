@@ -5,7 +5,7 @@
   },
   "routes": [
     {
-      "src": "/(css|js|images|favicon.svg|build|livewire)/(.*)",
+      "src": "/(css|js|images|favicon.svg|build)/(.*)",
       "dest": "/public/$1/$2"
     },
     {
