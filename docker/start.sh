@@ -18,6 +18,9 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
+# Ensure storage directories exist
+mkdir -p storage/app/public/products storage/app/public/brands
+
 # Ensure APP_URL is set correctly for Railway
 if [ -n "$RAILWAY_PUBLIC_DOMAIN" ] && [[ "$APP_URL" == *"localhost"* || -z "$APP_URL" ]]; then
     export APP_URL="https://$RAILWAY_PUBLIC_DOMAIN"
