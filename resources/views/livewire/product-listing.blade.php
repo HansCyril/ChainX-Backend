@@ -105,25 +105,24 @@
                                             @endfor
                                             <span class="text-[10px] font-bold text-gray-400 ml-1">({{ $product->reviews()->count() }})</span>
                                         </div>
-                                    </div>
-                                    <div class="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
-                                        <div class="flex flex-col">
-                                            @if($product->sale_price)
-                                                <span class="text-xs text-gray-400 line-through">₱{{ number_format($product->price, 2) }}</span>
-                                                <span class="text-xl font-black text-gray-900">₱{{ number_format($product->sale_price, 2) }}</span>
-                                            @else
-                                                <span class="text-xl font-black text-gray-900">₱{{ number_format($product->price, 2) }}</span>
-                                            @endif
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            @livewire('wishlist-toggle', ['productId' => $product->id], key('wishlist-'.$product->id))
-                                            <button wire:click="addToCart({{ $product->id }})" class="p-3 bg-gray-900 text-white rounded-xl hover:bg-indigo-600 transition-colors shadow-lg shadow-gray-200">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                                            </button>
+                                        <div class="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
+                                            <div class="flex flex-col">
+                                                @if($product->sale_price)
+                                                    <span class="text-xs text-gray-400 line-through">₱{{ number_format($product->price, 2) }}</span>
+                                                    <span class="text-xl font-black text-gray-900">₱{{ number_format($product->sale_price, 2) }}</span>
+                                                @else
+                                                    <span class="text-xl font-black text-gray-900">₱{{ number_format($product->price, 2) }}</span>
+                                                @endif
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                @livewire('wishlist-toggle', ['productId' => $product->id], key('wishlist-'.$product->id))
+                                                <button wire:click="addToCart({{ $product->id }})" class="p-3 bg-gray-900 text-white rounded-xl hover:bg-indigo-600 transition-colors shadow-lg shadow-gray-200">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         @empty
                             <div class="col-span-full py-20 text-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-100">
                                 <div class="mb-4 inline-flex p-4 bg-white rounded-full shadow-sm">
