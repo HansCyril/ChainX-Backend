@@ -83,8 +83,16 @@
                                     @endif
                                 </div>
                                 <div class="p-6 flex flex-col flex-1">
-                                    <div class="flex flex-col gap-1 mb-3">
-                                        <span class="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em]">{{ $product->category?->name ?? 'Uncategorized' }}</span>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em]">{{ $product->category?->name ?? 'Uncategorized' }}</span>
+                                            @if($product->quantity > 10)
+                                                <span class="text-[9px] font-black text-green-600 uppercase tracking-tighter bg-green-50 px-2 py-0.5 rounded-md border border-green-100">In Stock: {{ $product->quantity }}</span>
+                                            @elseif($product->quantity > 0)
+                                                <span class="text-[9px] font-black text-orange-600 uppercase tracking-tighter bg-orange-50 px-2 py-0.5 rounded-md border border-orange-100 italic">Only {{ $product->quantity }} left!</span>
+                                            @else
+                                                <span class="text-[9px] font-black text-red-600 uppercase tracking-tighter bg-red-50 px-2 py-0.5 rounded-md border border-red-100">Out of Stock</span>
+                                            @endif
+                                        </div>
                                         <h3 class="font-bold text-gray-900 group-hover:text-indigo-600 transition-colors line-clamp-2">
                                             <a href="{{ route('products.show', $product->slug) }}">
                                                 {{ $product->name }}
