@@ -45,7 +45,7 @@ class ProductController extends Controller
         $validated['sku'] = $validated['sku'] ?? 'SKU-' . strtoupper(Str::random(8));
         
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('products', config('filesystems.default'));
+            $validated['image'] = $request->file('image')->store('products', 'public');
         }
 
         try {
@@ -85,7 +85,7 @@ class ProductController extends Controller
         $validated['is_featured'] = $request->has('is_featured');
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('products', config('filesystems.default'));
+            $validated['image'] = $request->file('image')->store('products', 'public');
         }
 
         $product->update($validated);
