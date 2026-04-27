@@ -26,7 +26,7 @@ class SecurityHeaders
         // Content Security Policy (allows current styles/scripts)
         // Only apply strict policy in production
         if (!app()->isLocal()) {
-            $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.bunny.net; font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com; img-src 'self' data: https://placehold.co https://images.unsplash.com; connect-src 'self'; frame-ancestors 'none';");
+            $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net; font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com; img-src 'self' data: https://placehold.co https://images.unsplash.com; connect-src 'self' https://unpkg.com; frame-ancestors 'none';");
         }
 
         return $response;
