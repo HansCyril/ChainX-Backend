@@ -32,24 +32,28 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'sale_price' => 'nullable|numeric|min:0',
             'quantity' => 'required|integer|min:0',
-            'sku' => 'nullable|string|max:100|unique:products,sku',
+            'sku' => 'nullable|string|max:100',
             'category_id' => 'required|exists:categories,id',
             'brand_id' => 'required|exists:brands,id',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
         ]);
 
-        $validated['slug'] = Str::slug($validated['name']) . '-' . uniqid();
+        $validated['slug'] = Str::slug($validated['name']) . '-' . Str::random(5);
         $validated['is_active'] = $request->has('is_active');
         $validated['is_featured'] = $request->has('is_featured');
+        $validated['sku'] = $validated['sku'] ?? 'SKU-' . strtoupper(Str::random(8));
         
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('products', config('filesystems.default'));
         }
 
-        Product::create($validated);
-
-        return redirect()->route('admin.products.index')->with('success', 'Product created successfully.');
+        try {
+            Product::create($validated);
+            return redirect()->route('admin.products.index')->with('success', 'Product created successfully.');
+        } catch (\Exception $e) {
+            return back()->withInput()->withErrors(['error' => 'Failed to create product: ' . $e->getMessage()]);
+        }
     }
 
     public function show(string $id)
