@@ -116,9 +116,16 @@
                                             </div>
                                             <div class="flex items-center gap-2">
                                                 @livewire('wishlist-toggle', ['productId' => $product->id], key('wishlist-'.$product->id))
-                                                <button wire:click="addToCart({{ $product->id }})" class="p-3 bg-gray-900 text-white rounded-xl hover:bg-indigo-600 transition-colors shadow-lg shadow-gray-200">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                                                </button>
+                                                
+                                                @if($product->quantity > 0)
+                                                    <button wire:click="addToCart({{ $product->id }})" class="p-3 bg-gray-900 text-white rounded-xl hover:bg-indigo-600 transition-colors shadow-lg shadow-gray-200" title="Add to Cart">
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                                    </button>
+                                                @else
+                                                    <button disabled class="p-3 bg-gray-100 text-gray-400 rounded-xl cursor-not-allowed border border-gray-200" title="Out of Stock">
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                                                    </button>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
