@@ -11,10 +11,12 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     nginx \
-    libicu-dev
+    libicu-dev \
+    libonig-dev \
+    libxml2-dev
 
 # Install extensions
-RUN docker-php-ext-install pdo_mysql gd zip intl
+RUN docker-php-ext-install pdo_mysql gd zip intl bcmath calendar
 
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
