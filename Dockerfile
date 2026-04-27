@@ -1,4 +1,4 @@
-FROM php:8.2-fpm
+FROM php:8.4-fpm
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
@@ -10,10 +10,11 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
-    nginx
+    nginx \
+    libicu-dev
 
 # Install extensions
-RUN docker-php-ext-install pdo_mysql gd zip
+RUN docker-php-ext-install pdo_mysql gd zip intl
 
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -31,7 +32,7 @@ COPY --chown=www-data:www-data . /var/www
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
 # Install node dependencies and build assets
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
     npm install && \
     npm run build
