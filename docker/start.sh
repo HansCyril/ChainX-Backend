@@ -22,11 +22,9 @@ php artisan view:cache
 echo "Running migrations..."
 php artisan migrate --force || (echo "Migration failed, retrying in 5s..." && sleep 5 && php artisan migrate --force)
 
-# Run seeder if class exists
-if [ -f "database/seeders/ShopSeeder.php" ]; then
-    echo "Running ShopSeeder..."
-    php artisan db:seed --class=ShopSeeder --force || echo "Seeding failed or already seeded."
-fi
+# Run seeders
+echo "Running seeders..."
+php artisan db:seed --force || echo "Seeding failed or already seeded."
 
 # Create storage symlink
 php artisan storage:link --force 2>/dev/null || true

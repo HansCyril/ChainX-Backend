@@ -18,21 +18,25 @@ class ShopSeeder extends Seeder
         ];
 
         foreach ($categories as $category) {
-            \App\Models\Category::create([
-                'name' => $category,
-                'slug' => \Illuminate\Support\Str::slug($category),
-                'is_active' => true,
-            ]);
+            \App\Models\Category::firstOrCreate(
+                ['slug' => \Illuminate\Support\Str::slug($category)],
+                [
+                    'name' => $category,
+                    'is_active' => true,
+                ]
+            );
         }
 
         $brands = ['Shimano', 'SRAM', 'Specialized', 'Trek', 'Giant', 'Canyon'];
 
         foreach ($brands as $brand) {
-            \App\Models\Brand::create([
-                'name' => $brand,
-                'slug' => \Illuminate\Support\Str::slug($brand),
-                'is_active' => true,
-            ]);
+            \App\Models\Brand::firstOrCreate(
+                ['slug' => \Illuminate\Support\Str::slug($brand)],
+                [
+                    'name' => $brand,
+                    'is_active' => true,
+                ]
+            );
         }
     }
 }
