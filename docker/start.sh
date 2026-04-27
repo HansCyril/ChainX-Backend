@@ -18,18 +18,32 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Run migrations (with a retry in case DB is slow to start)
+# Ensure APP_URL is set correctly for Railway
+if [ -n "$RAILWAY_PUBLIC_DOMAIN" ] && [[ "$APP_URL" == *"localhost"* || -z "$APP_URL" ]]; then
+    export APP_URL="https://$RAILWAY_PUBLIC_DOMAIN"
+    echo "Auto-set APP_URL to $APP_URL"
+fi
+
+# Run migrations with retry
 echo "Running migrations..."
-php artisan migrate --force || (echo "Migration failed, retrying in 5s..." && sleep 5 && php artisan migrate --force)
+for i in {1..5}; do
+    php artisan migrate --force && break || {
+        echo "Migration failed, retrying in 5s... ($i/5)"
+        sleep 5
+    }
+done
 
-# Run seeders
+# Run seeders (idempotent)
 echo "Running seeders..."
-php artisan db:seed --force || echo "Seeding failed or already seeded."
+php artisan db:seed --force
 
-# Create storage symlink
-php artisan storage:link --force 2>/dev/null || true
+# Force recreate storage symlink to ensure it's correct for Linux
+echo "Rebuilding storage symlink..."
+rm -rf public/storage
+php artisan storage:link --force
 
-# Fix permissions
+# Set permissions
+echo "Setting permissions..."
 chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
