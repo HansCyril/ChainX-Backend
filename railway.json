@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "php artisan migrate --force && php artisan db:seed --class=ShopSeeder && apache2-foreground",
+    "startCommand": "php artisan migrate --force && php artisan db:seed --class=ShopSeeder && envsubst '$PORT' < /etc/nginx/sites-available/default > /tmp/nginx-default && cp /tmp/nginx-default /etc/nginx/sites-available/default && service nginx start && php-fpm",
     "healthcheckPath": "/up",
     "restartPolicyType": "ON_FAILURE"
   }
