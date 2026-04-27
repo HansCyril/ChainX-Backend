@@ -74,6 +74,33 @@ Route::get('/products', \App\Livewire\ProductListing::class)->name('products.ind
 Route::get('/cart', \App\Livewire\CartManager::class)->name('cart');
 Route::get('/wishlist', \App\Livewire\WishlistManager::class)->middleware(['auth'])->name('wishlist');
 Route::get('/checkout', \App\Livewire\Checkout::class)->middleware(['auth'])->name('checkout');
+
 Route::get('/products/{product:slug}', [App\Http\Controllers\ProductController::class, 'show'])->name('products.show');
+
+// Temporary Debug Route for Storage
+Route::get('/debug-storage', function() {
+    $path = storage_path('app/public');
+    $files = [];
+    if (file_exists($path)) {
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
+        foreach ($iterator as $file) {
+            if ($file->isFile()) {
+                $files[] = [
+                    'name' => $file->getFilename(),
+                    'path' => $file->getPathname(),
+                    'size' => $file->getSize(),
+                    'readable' => is_readable($file->getPathname())
+                ];
+            }
+        }
+    }
+    return response()->json([
+        'storage_path' => $path,
+        'exists' => file_exists($path),
+        'files' => $files,
+        'app_url' => config('app.url'),
+        'disk' => config('filesystems.default')
+    ]);
+});
 
 require __DIR__.'/auth.php';
