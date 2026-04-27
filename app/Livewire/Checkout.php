@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\PromoCode;
+use App\Models\Wishlist;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -108,7 +109,14 @@ class Checkout extends Component
                 }
             }
 
-            // 4. Log high-value action for security audit
+            // 4. Remove ordered items from Wishlist
+            Wishlist::where('user_id', auth()->id())
+                ->whereIn('product_id', collect($this->cart)->pluck('id'))
+                ->delete();
+
+            $this->dispatch('wishlist-updated');
+
+            // 5. Log high-value action for security audit
             \Illuminate\Support\Facades\Log::info("SECURITY_AUDIT: Order placed", [
                 'order_id' => $order->id,
                 'user_id' => auth()->id(),
