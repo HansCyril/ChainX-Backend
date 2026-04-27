@@ -8,7 +8,7 @@
     <div class="py-12 bg-slate-50 min-h-screen">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-2xl sm:rounded-[2.5rem] border border-slate-100 p-8 md:p-12">
-                <form action="{{ route('admin.brands.store') }}" method="POST" class="space-y-8">
+                <form action="{{ route('admin.brands.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
                     @csrf
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -17,6 +17,14 @@
                             <input type="text" name="name" value="{{ old('name') }}" class="w-full rounded-xl bg-slate-50 border-slate-200 text-slate-800 shadow-inner focus:border-red-500 focus:ring-red-500 transition-all font-bold p-4" required>
                             @error('name') <span class="text-red-500 text-xs font-bold">{{ $message }}</span> @enderror
                             <p class="text-[10px] uppercase font-bold text-slate-400 mt-2 tracking-widest">A unique URL slug will be automatically generated from the brand name.</p>
+                        </div>
+
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Brand Image / Logo</label>
+                            <div class="relative group">
+                                <input type="file" name="image" class="w-full rounded-xl bg-slate-50 border-slate-200 text-slate-800 shadow-inner focus:border-red-500 focus:ring-red-500 transition-all font-bold p-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:uppercase file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer">
+                            </div>
+                            @error('image') <span class="text-red-500 text-xs font-bold">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="col-span-1 md:col-span-2 flex space-x-6 items-center p-6 bg-slate-50 rounded-2xl border border-slate-100">
