@@ -44,7 +44,7 @@ class ProductController extends Controller
         $validated['is_featured'] = $request->has('is_featured');
         
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('products', 'public');
+            $validated['image'] = $request->file('image')->store('products', config('filesystems.default'));
         }
 
         Product::create($validated);
@@ -81,7 +81,7 @@ class ProductController extends Controller
         $validated['is_featured'] = $request->has('is_featured');
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('products', 'public');
+            $validated['image'] = $request->file('image')->store('products', config('filesystems.default'));
         }
 
         $product->update($validated);

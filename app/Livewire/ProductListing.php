@@ -16,7 +16,7 @@ class ProductListing extends Component
     public $selectedCategory = null;
     public $selectedBrand = null;
     public $minPrice = 0;
-    public $maxPrice = 10000;
+    public $maxPrice = 1000000;
     public $sortBy = 'created_at';
     public $sortDirection = 'desc';
 
@@ -25,7 +25,7 @@ class ProductListing extends Component
         'selectedCategory' => ['except' => null],
         'selectedBrand' => ['except' => null],
         'minPrice' => ['except' => 0],
-        'maxPrice' => ['except' => 10000],
+        'maxPrice' => ['except' => 1000000],
     ];
 
     public function updatingSearch()

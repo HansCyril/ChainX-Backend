@@ -39,7 +39,7 @@ class BrandController extends Controller
         }
         
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('brands', 'public');
+            $validated['image'] = $request->file('image')->store('brands', config('filesystems.default'));
         }
 
         Brand::create($validated);
@@ -76,9 +76,9 @@ class BrandController extends Controller
         
         if ($request->hasFile('image')) {
             if ($brand->image) {
-                Storage::disk('public')->delete($brand->image);
+                Storage::disk(config('filesystems.default'))->delete($brand->image);
             }
-            $validated['image'] = $request->file('image')->store('brands', 'public');
+            $validated['image'] = $request->file('image')->store('brands', config('filesystems.default'));
         }
 
         $brand->update($validated);
@@ -94,7 +94,7 @@ class BrandController extends Controller
         }
         
         if ($brand->image) {
-            Storage::disk('public')->delete($brand->image);
+            Storage::disk(config('filesystems.default'))->delete($brand->image);
         }
         
         $brand->delete();

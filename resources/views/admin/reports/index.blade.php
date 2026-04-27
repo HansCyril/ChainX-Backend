@@ -15,10 +15,10 @@
             <h2 class="font-black text-2xl text-gray-800 leading-tight uppercase tracking-tight italic">Business Intelligence & Reports</h2>
             <div class="flex items-center justify-between md:justify-end gap-6">
                 <p class="text-sm font-bold text-gray-400 uppercase tracking-widest hidden sm:block">Real-time Performance Metrics</p>
-                <button id="dl-btn" onclick="downloadReport()" class="no-print inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-600/30 transition-all active:scale-95">
+                <a href="{{ route('admin.reports.export') }}" class="no-print inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-600/30 transition-all active:scale-95">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    Download PDF
-                </button>
+                    Download Excel
+                </a>
             </div>
         </div>
     </x-slot>
@@ -147,31 +147,5 @@
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script>
-        function downloadReport() {
-            const element = document.getElementById('report-container');
-            const btn = document.getElementById('dl-btn');
-            const originalContent = btn.innerHTML;
-            
-            btn.innerHTML = '<span class="animate-pulse flex items-center gap-2">Generating...</span>';
-            btn.disabled = true;
 
-            const opt = {
-                margin:       0.3,
-                filename:     'Business_Report_' + new Date().toISOString().split('T')[0] + '.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#f9fafb' }, // matches bg-gray-50
-                jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
-            };
-
-            html2pdf().set(opt).from(element).save().then(() => {
-                btn.innerHTML = originalContent;
-                btn.disabled = false;
-            }).catch(() => {
-                btn.innerHTML = originalContent;
-                btn.disabled = false;
-            });
-        }
-    </script>
 </x-app-layout>

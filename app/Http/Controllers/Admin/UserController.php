@@ -57,6 +57,16 @@ class UserController extends Controller
         return back()->with('success', 'Account created successfully.');
     }
 
+    public function toggleRole(User $user)
+    {
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'You cannot change your own role.');
+        }
+        $user->update(['is_admin' => !$user->is_admin]);
+        $role = $user->is_admin ? 'Admin' : 'Customer';
+        return back()->with('success', "User role updated to {$role}.");
+    }
+
     public function toggleArchive(User $user)
     {
         if ($user->id === auth()->id()) {

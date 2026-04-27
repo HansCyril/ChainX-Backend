@@ -14,7 +14,7 @@
             <div class="grid grid-cols-2 md:grid-cols-5 gap-6 mb-8">
                 <div class="block bg-white p-8 rounded-[2rem] shadow-xl border border-gray-100 group hover:bg-gray-900 transition-all duration-500">
                     <span class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 group-hover:text-gray-500">Total Sales</span>
-                    <span class="text-4xl font-black text-gray-900 group-hover:text-white transition-colors">₱{{ number_format($stats['total_sales'], 2) }}</span>
+                    <span class="text-4xl font-black text-gray-900 group-hover:text-white transition-colors"><span class="mr-1 font-sans">₱</span>{{ number_format($stats['total_sales'], 2) }}</span>
                 </div>
                 <div class="block bg-white p-8 rounded-[2rem] shadow-xl border border-gray-100 group hover:bg-indigo-600 transition-all duration-500">
                     <span class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 group-hover:text-indigo-200">Total Orders</span>

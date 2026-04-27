@@ -76,7 +76,6 @@
                             <div class="group flex flex-col bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
                                 <div class="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
                                     <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://placehold.co/600x600/f3f4f6/374151?text=' . urlencode($product->name) }}" alt="{{ $product->name }}" class="h-full w-full object-cover p-0 group-hover:scale-110 transition-transform duration-500">
-                                    @livewire('wishlist-toggle', ['productId' => $product->id], key('wishlist-'.$product->id))
                                     @if($product->sale_price)
                                         <div class="absolute top-4 left-4">
                                             <span class="bg-red-500 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">Sale</span>
@@ -108,9 +107,12 @@
                                                 <span class="text-xl font-black text-gray-900">₱{{ number_format($product->price, 2) }}</span>
                                             @endif
                                         </div>
-                                        <button wire:click="addToCart({{ $product->id }})" class="p-3 bg-gray-900 text-white rounded-xl hover:bg-indigo-600 transition-colors shadow-lg shadow-gray-200">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                                        </button>
+                                        <div class="flex items-center gap-2">
+                                            @livewire('wishlist-toggle', ['productId' => $product->id], key('wishlist-'.$product->id))
+                                            <button wire:click="addToCart({{ $product->id }})" class="p-3 bg-gray-900 text-white rounded-xl hover:bg-indigo-600 transition-colors shadow-lg shadow-gray-200">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -47,8 +47,7 @@ new class extends Component
                             {{ $link['label'] }}
                             
                             @if(isset($link['id']))
-                                <span id="nav-{{ $link['id'] }}-count" 
-                                      class="ms-2 bg-orange-600 text-white text-[9px] font-black rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 leading-none shadow-lg shadow-orange-600/20"
+                                <span class="nav-{{ $link['id'] }}-count ms-2 bg-orange-600 text-white text-[9px] font-black rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 leading-none shadow-lg shadow-orange-600/20"
                                       style="display: none;">0</span>
                             @endif
 
@@ -96,10 +95,8 @@ new class extends Component
                         </x-dropdown-link>
 
                         <!-- Authentication -->
-                        <button wire:click="logout" class="w-full text-start">
-                            <x-dropdown-link>
-                                <span class="text-red-500 font-bold italic">{{ __('Terminate Session') }}</span>
-                            </x-dropdown-link>
+                        <button wire:click="logout" class="block w-full px-4 py-3 text-start text-xs font-black uppercase tracking-widest text-red-500 hover:text-red-400 hover:bg-slate-700 focus:outline-none focus:bg-slate-700 transition duration-150 ease-in-out italic">
+                            {{ __('Terminate Session') }}
                         </button>
                     </x-slot>
                 </x-dropdown>
@@ -132,7 +129,13 @@ new class extends Component
         <div class="pt-4 space-y-2">
             @foreach($links as $link)
                 <x-responsive-nav-link :href="route($link['route'])" :active="$link['active']" wire:navigate>
-                    <span class="uppercase tracking-widest font-black italic">{{ $link['label'] }}</span>
+                    <div class="flex items-center justify-between w-full">
+                        <span class="uppercase tracking-widest font-black italic">{{ $link['label'] }}</span>
+                        @if(isset($link['id']))
+                            <span class="nav-{{ $link['id'] }}-count bg-orange-600 text-white text-[9px] font-black rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 leading-none shadow-lg shadow-orange-600/20"
+                                  style="display: none;">0</span>
+                        @endif
+                    </div>
                 </x-responsive-nav-link>
             @endforeach
         </div>
@@ -155,10 +158,8 @@ new class extends Component
                     {{ __('Account Settings') }}
                 </x-responsive-nav-link>
 
-                <button wire:click="logout" class="w-full text-start">
-                    <x-responsive-nav-link>
-                        <span class="text-red-500 font-black italic">{{ __('Terminate Session') }}</span>
-                    </x-responsive-nav-link>
+                <button wire:click="logout" class="block w-full ps-3 pe-4 py-3 border-l-4 border-transparent text-start text-base font-black italic uppercase tracking-widest text-red-500 hover:text-red-400 hover:bg-slate-800 hover:border-red-500 focus:outline-none focus:text-red-400 focus:bg-slate-800 focus:border-red-500 transition duration-150 ease-in-out">
+                    {{ __('Terminate Session') }}
                 </button>
             </div>
             @else
@@ -178,14 +179,14 @@ new class extends Component
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 if (!data) return;
-                const el = document.getElementById('nav-cart-count');
-                if (!el) return;
-                if (data.count > 0) {
-                    el.textContent = data.count;
-                    el.style.display = 'flex';
-                } else {
-                    el.style.display = 'none';
-                }
+                document.querySelectorAll('.nav-cart-count').forEach(el => {
+                    if (data.count > 0) {
+                        el.textContent = data.count;
+                        el.style.display = 'flex';
+                    } else {
+                        el.style.display = 'none';
+                    }
+                });
             }).catch(() => {});
 
         // Wishlist
@@ -193,17 +194,18 @@ new class extends Component
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 if (!data) return;
-                const el = document.getElementById('nav-wishlist-count');
-                if (!el) return;
-                if (data.count > 0) {
-                    el.textContent = data.count;
-                    el.style.display = 'flex';
-                } else {
-                    el.style.display = 'none';
-                }
+                document.querySelectorAll('.nav-wishlist-count').forEach(el => {
+                    if (data.count > 0) {
+                        el.textContent = data.count;
+                        el.style.display = 'flex';
+                    } else {
+                        el.style.display = 'none';
+                    }
+                });
             }).catch(() => {});
     }
     document.addEventListener('DOMContentLoaded', updateNavBadges);
+    document.addEventListener('livewire:navigated', updateNavBadges);
     document.addEventListener('livewire:initialized', () => {
         Livewire.on('cartUpdated', updateNavBadges);
         Livewire.on('cart-added', updateNavBadges);

@@ -148,11 +148,17 @@
                                     </td>
                                     <td class="px-8 py-5">
                                         <div class="flex gap-2">
-                                            @if($user->is_admin)
-                                                <span class="px-3 py-1 rounded-full text-[10px] uppercase font-black tracking-widest bg-red-100 text-red-600">Admin</span>
+                                            @if($user->id !== auth()->id())
+                                                <form method="POST" action="{{ route('admin.users.toggle-role', $user) }}">
+                                                    @csrf @method('PATCH')
+                                                    <button type="submit" class="px-3 py-1 rounded-full text-[10px] uppercase font-black tracking-widest {{ $user->is_admin ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-gray-100 text-gray-500 hover:bg-gray-200' }} transition-colors" title="Click to change role">
+                                                        {{ $user->is_admin ? 'Admin' : 'Customer' }}
+                                                    </button>
+                                                </form>
                                             @else
-                                                <span class="px-3 py-1 rounded-full text-[10px] uppercase font-black tracking-widest bg-gray-100 text-gray-500">Customer</span>
+                                                <span class="px-3 py-1 rounded-full text-[10px] uppercase font-black tracking-widest bg-red-100 text-red-600">Admin</span>
                                             @endif
+
                                             @if($user->is_archived)
                                                 <span class="px-3 py-1 rounded-full text-[10px] uppercase font-black tracking-widest bg-amber-100 text-amber-600">Archived</span>
                                             @endif
@@ -162,6 +168,12 @@
                                     <td class="px-8 py-5 text-gray-400">{{ $user->created_at->format('M d, Y') }}</td>
                                     <td class="px-8 py-5 text-right flex items-center justify-end gap-2">
                                         @if($user->id !== auth()->id())
+                                            <form method="POST" action="{{ route('admin.users.toggle-role', $user) }}">
+                                                @csrf @method('PATCH')
+                                                <button type="submit" class="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-indigo-100 transition-colors">
+                                                    {{ $user->is_admin ? 'Demote' : 'Promote' }}
+                                                </button>
+                                            </form>
                                             <form method="POST" action="{{ route('admin.users.toggle-archive', $user) }}">
                                                 @csrf @method('PATCH')
                                                 <button type="submit" class="px-4 py-2 {{ $user->is_archived ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-amber-50 text-amber-600 hover:bg-amber-100' }} rounded-xl text-xs font-black uppercase tracking-widest transition-colors">

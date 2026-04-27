@@ -11,12 +11,82 @@ use Illuminate\Support\Facades\DB;
 
 class ReportsController extends Controller
 {
-    public function index()
+    public function export()
     {
-        // Revenue by month (last 6 months) — MySQL syntax
+        $fileName = 'ChainX_Business_Report_' . date('Y-m-d') . '.csv';
+
+        // Monthly Revenue data
+        $dateFunc = DB::getDriverName() === 'sqlite' 
+            ? "strftime('%Y-%m', created_at)" 
+            : "DATE_FORMAT(created_at, '%Y-%m')";
+
         $revenueByMonth = Order::where('payment_status', 'paid')
             ->where('created_at', '>=', now()->subMonths(6))
-            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, SUM(total_amount) as revenue, COUNT(*) as orders")
+            ->selectRaw("{$dateFunc} as month, SUM(total_amount) as revenue, COUNT(*) as orders")
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        $topProducts = OrderItem::with('product')
+            ->selectRaw('product_id, SUM(quantity) as total_sold, SUM(quantity * price) as total_revenue')
+            ->groupBy('product_id')
+            ->orderByDesc('total_sold')
+            ->take(20)
+            ->get();
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function() use ($revenueByMonth, $topProducts) {
+            $file = fopen('php://output', 'w');
+            
+            // Header
+            fputcsv($file, ['CHAINX BUSINESS REPORT - ' . date('F d, Y')]);
+            fputcsv($file, []);
+
+            // Overall Stats
+            fputcsv($file, ['OVERALL PERFORMANCE']);
+            fputcsv($file, ['Total Revenue', '₱' . number_format(Order::where('payment_status', 'paid')->sum('total_amount'), 2)]);
+            fputcsv($file, ['Total Orders', Order::count()]);
+            fputcsv($file, ['Avg Order Value', '₱' . number_format(Order::where('payment_status', 'paid')->avg('total_amount') ?? 0, 2)]);
+            fputcsv($file, []);
+
+            // Monthly Data
+            fputcsv($file, ['MONTHLY REVENUE TREND (Last 6 Months)']);
+            fputcsv($file, ['Month', 'Revenue', 'Orders']);
+            foreach ($revenueByMonth as $row) {
+                fputcsv($file, [$row->month, $row->revenue, $row->orders]);
+            }
+            fputcsv($file, []);
+
+            // Product Data
+            fputcsv($file, ['TOP SELLING PRODUCTS']);
+            fputcsv($file, ['Product Name', 'Units Sold', 'Total Revenue']);
+            foreach ($topProducts as $tp) {
+                fputcsv($file, [$tp->product->name ?? 'N/A', $tp->total_sold, $tp->total_revenue]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function index()
+    {
+        // Revenue by month (last 6 months)
+        $dateFunc = DB::getDriverName() === 'sqlite' 
+            ? "strftime('%Y-%m', created_at)" 
+            : "DATE_FORMAT(created_at, '%Y-%m')";
+
+        $revenueByMonth = Order::where('payment_status', 'paid')
+            ->where('created_at', '>=', now()->subMonths(6))
+            ->selectRaw("{$dateFunc} as month, SUM(total_amount) as revenue, COUNT(*) as orders")
             ->groupBy('month')
             ->orderBy('month')
             ->get();

@@ -47,8 +47,8 @@ class WishlistToggle extends Component
     {
         return <<<'HTML'
         <button wire:click.stop="toggle" 
-                class="absolute top-4 right-4 p-3 rounded-2xl backdrop-blur-md transition-all duration-300 group z-10
-                {{ $isWishlisted ? 'bg-red-500 text-white shadow-xl shadow-red-200' : 'bg-white/90 text-gray-400 hover:text-red-500 hover:bg-white shadow-lg' }}">
+                class="p-3 rounded-xl transition-all duration-300 group z-10
+                {{ $isWishlisted ? 'bg-red-500 text-white shadow-xl shadow-red-200' : 'bg-gray-50 text-gray-400 hover:text-red-500 hover:bg-red-50 border border-gray-100 shadow-sm' }}">
             <svg class="w-5 h-5 transition-transform group-hover:scale-125 {{ $isWishlisted ? 'fill-current' : 'fill-none' }}" 
                  stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
