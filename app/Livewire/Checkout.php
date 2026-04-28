@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\DB;
 
 class Checkout extends Component
 {
+    public $name = '';
+    public $email = '';
+    public $phone = '';
     public $address = '';
     public $notes = '';
     public $paymentMethod = 'cod';
@@ -28,6 +31,14 @@ class Checkout extends Component
         
         if (count($this->cart) === 0) {
             return redirect()->route('products.index');
+        }
+
+        if (auth()->check()) {
+            $user = auth()->user();
+            $this->name = $user->name;
+            $this->email = $user->email;
+            $this->phone = $user->phone;
+            $this->address = $user->address;
         }
 
         $this->calculateTotals();
@@ -58,6 +69,9 @@ class Checkout extends Component
     public function placeOrder()
     {
         $this->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
             'address' => 'required|min:10',
             'paymentMethod' => 'required',
         ]);

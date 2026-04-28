@@ -7,6 +7,25 @@
                     <h2 class="text-3xl font-black text-gray-900 mb-8 tracking-tight uppercase italic">Shipping Information</h2>
                     
                     <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Full Name</label>
+                                <input type="text" wire:model="name" placeholder="Juan Dela Cruz" class="w-full rounded-2xl border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-4 px-6 text-sm bg-gray-50/50">
+                                @error('name') <span class="text-red-500 text-xs font-bold mt-1">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Phone Number</label>
+                                <input type="text" wire:model="phone" placeholder="0912 345 6789" class="w-full rounded-2xl border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-4 px-6 text-sm bg-gray-50/50">
+                                @error('phone') <span class="text-red-500 text-xs font-bold mt-1">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Email Address</label>
+                            <input type="email" wire:model="email" placeholder="juan@example.com" class="w-full rounded-2xl border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-4 px-6 text-sm bg-gray-50/50">
+                            @error('email') <span class="text-red-500 text-xs font-bold mt-1">{{ $message }}</span> @enderror
+                        </div>
+
                         <div>
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Shipping Address</label>
                             <textarea wire:model="address" rows="4" placeholder="Street name, City, State, ZIP..." class="w-full rounded-2xl border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-4 px-6 text-sm bg-gray-50/50"></textarea>
