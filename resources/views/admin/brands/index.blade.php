@@ -41,10 +41,12 @@
                                 @forelse($brands as $brand)
                                     <tr class="hover:bg-slate-50/50 transition-colors">
                                         <td class="px-8 py-6">
-                                            @if($brand->image)
+                                            @if($brand->image && Storage::disk('public')->exists($brand->image))
                                                 <img src="{{ Storage::url($brand->image) }}" class="w-12 h-12 object-contain rounded-lg bg-white border border-slate-100" alt="{{ $brand->name }}">
                                             @else
-                                                <div class="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 text-xs">No Img</div>
+                                                <div class="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 text-[10px] font-black uppercase text-center leading-none p-1">
+                                                    {{ $brand->image ? 'Missing File' : 'No Image' }}
+                                                </div>
                                             @endif
                                         </td>
                                         <td class="px-8 py-6">

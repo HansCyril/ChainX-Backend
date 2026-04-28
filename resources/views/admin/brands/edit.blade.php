@@ -24,7 +24,13 @@
                             <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Brand Image / Logo</label>
                             @if($brand->image)
                                 <div class="mb-4">
-                                    <img src="{{ asset('storage/' . $brand->image) }}" alt="{{ $brand->name }}" class="w-32 h-32 object-contain rounded-2xl border-2 border-slate-100 bg-slate-50">
+                                    @if(Storage::disk('public')->exists($brand->image))
+                                        <img src="{{ Storage::url($brand->image) }}" alt="{{ $brand->name }}" class="w-32 h-32 object-contain rounded-2xl border-2 border-slate-100 bg-slate-50">
+                                    @else
+                                        <div class="w-32 h-32 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 text-xs font-bold uppercase text-center p-4">
+                                            File Missing from Storage
+                                        </div>
+                                    @endif
                                     <p class="text-[10px] uppercase font-bold text-slate-400 mt-2 tracking-widest">Current Image</p>
                                 </div>
                             @endif
